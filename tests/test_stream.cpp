@@ -4,9 +4,9 @@
 #include "exceptions.hpp"
 
 TEST(ReadOnlyStream, FromSequence) {
-    int items[] = {1,2, };
-    ArraySequence<int> arr(items, 3);
-    ReadOnlyStream<int> stream(&arr);
+    int items[] = {1, 2, 3};
+    LazySequence<int> seq(items,3);         
+    ReadOnlyStream<int> stream(seq); 
 
     EXPECT_EQ(stream.GetPosition(), 0u)
         << "input: ReadOnlyStream(arr{1,2,3}) -> GetPosition()"
@@ -17,9 +17,9 @@ TEST(ReadOnlyStream, FromSequence) {
 }
 
 TEST(ReadOnlyStream, Read) {
-    int items[] = {10,20,30};
-    ArraySequence<int> arr(items, 3);
-    ReadOnlyStream<int> stream(&arr);
+    int items[] = {10, 20, 30};
+    LazySequence<int> seq(items,3);   
+    ReadOnlyStream<int> stream(seq);
 
     EXPECT_EQ(stream.Read(), 10)
         << "input: ReadOnlyStream{10,20,30}.Read()"
@@ -37,8 +37,8 @@ TEST(ReadOnlyStream, Read) {
 
 TEST(ReadOnlyStream, EndOfStreamThrows) {
     int items[] = {1};
-    ArraySequence<int> arr(items, 1);
-    ReadOnlyStream<int> stream(&arr);
+    LazySequence<int> seq(items,1);   
+    ReadOnlyStream<int> stream(seq);
 
     stream.Read();
     EXPECT_THROW(stream.Read(), EndOfStream)
@@ -47,9 +47,9 @@ TEST(ReadOnlyStream, EndOfStreamThrows) {
 }
 
 TEST(ReadOnlyStream, GetPosition) {
-    int items[] = {1,2,3};
-    ArraySequence<int> arr(items, 3);
-    ReadOnlyStream<int> stream(&arr);
+    int items[] = {1, 2, 3};
+    LazySequence<int> seq(items,3);   
+    ReadOnlyStream<int> stream(seq);
 
     stream.Read();
     stream.Read();
@@ -59,9 +59,9 @@ TEST(ReadOnlyStream, GetPosition) {
 }
 
 TEST(ReadOnlyStream, Seek) {
-    int items[] = {10,20,30,40,50};
-    ArraySequence<int> arr(items, 5);
-    ReadOnlyStream<int> stream(&arr);
+    int items[] = {10, 20, 30, 40, 50};
+    LazySequence<int> seq(items,5);   
+    ReadOnlyStream<int> stream(seq);
 
     stream.Seek(3);
     EXPECT_EQ(stream.GetPosition(), 3u)
@@ -73,21 +73,21 @@ TEST(ReadOnlyStream, Seek) {
 }
 
 TEST(ReadOnlyStream, Close) {
-    int items[] = {1,2,3};
-    ArraySequence<int> arr(items, 3);
-    ReadOnlyStream<int> stream(&arr);
+    int items[] = {1, 2, 3};
+    LazySequence<int> seq(items,3);   
+    ReadOnlyStream<int> stream(seq);
 
     stream.Read();
     stream.Read();
     stream.Close();
     EXPECT_EQ(stream.GetPosition(), 0u)
         << "input: после двух Read() -> Close() -> GetPosition()"
-        << "\nexpected: 0 (Close сбрасывает позицию)";
+        << "\nexpected: 0 ";
 }
 
 TEST(WriteOnlyStream, Write) {
     LazySequence<int> target;
-    WriteOnlyStream<int> stream(&target);
+    WriteOnlyStream<int> stream(target);  
 
     EXPECT_EQ(stream.Write(10), 1u)
         << "input: WriteOnlyStream.Write(10)"

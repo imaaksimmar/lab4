@@ -34,7 +34,7 @@ TEST(LazySequenceMethods, GetSubsequence) {
     LazySequence<int> seq(items, 5);
 
     LazySequence<int>* sub = seq.GetSubsequence(1, 3);
-    EXPECT_EQ(sub->GetLength().value, 3u)
+    EXPECT_EQ(sub->GetLength().GetValue(), 3u)
         << "input: LazySequence{10,20,30,40,50}.GetSubsequence(1,3) -> GetLength()"
         << "\nexpected: 3";
     EXPECT_EQ(sub->Get(0), 20)
@@ -90,7 +90,7 @@ TEST(LazySequenceMethods, Concat) {
     LazySequence<int> seq2(b, 2);
     seq1.Concat(&seq2);
 
-    EXPECT_EQ(seq1.GetLength().value, 5u)
+    EXPECT_EQ(seq1.GetLength().GetValue(), 5u)
         << "input: LazySequence{1,2,3}.Concat({4,5}) -> GetLength()"
         << "\nexpected: 5";
     EXPECT_EQ(seq1.Get(3), 4)

@@ -6,11 +6,11 @@
 TEST(LazySequenceConstructors, DefaultConstructor) {
     LazySequence<int> seq;
 
-    EXPECT_EQ(seq.GetLength().value, 0u)
-        << "input: LazySequence<int> seq -> seq.GetLength().value"
+    EXPECT_EQ(seq.GetLength().GetValue(), 0u)
+        << "input: LazySequence<int> seq -> seq.GetLength().GetValue()"
         << "\nexpected: 0";
-    EXPECT_FALSE(seq.GetLength().isInfinite)
-  << "input: LazySequence<int> seq -> seq.GetLength().isInfinite"
+    EXPECT_FALSE(seq.GetLength().IsInfinite())
+        << "input: LazySequence<int> seq -> seq.GetLength().IsInfinite()"
         << "\nexpected: false";
 }
 
@@ -18,8 +18,8 @@ TEST(LazySequenceConstructors, FromArrayConstructor) {
     int items[] = {1,2,3,4,5};
     LazySequence<int> seq(items, 5);
 
-    EXPECT_EQ(seq.GetLength().value, 5u)
-        << "input: LazySequence<int> seq({1,2,3,4,5}, 5) -> seq.GetLength().value"
+    EXPECT_EQ(seq.GetLength().GetValue(), 5u)
+        << "input: LazySequence<int> seq({1,2,3,4,5}, 5) -> seq.GetLength().GetValue()"
         << "\nexpected: 5";
     EXPECT_EQ(seq.Get(0), 1)
         << "input: LazySequence<int> seq({1,2,3,4,5}, 5) -> seq.Get(0)"
@@ -34,8 +34,8 @@ TEST(LazySequenceConstructors, FromSequenceConstructor) {
     ArraySequence<int> arr(items, 3);
     LazySequence<int> seq(&arr);
 
-    EXPECT_EQ(seq.GetLength().value, 3u)
-        << "input: LazySequence<int> seq(&ArraySequence{10,20,30}) -> seq.GetLength().value"
+    EXPECT_EQ(seq.GetLength().GetValue(), 3u)
+        << "input: LazySequence<int> seq(&ArraySequence{10,20,30}) -> seq.GetLength().GetValue()"
         << "\nexpected: 3";
     EXPECT_EQ(seq.Get(1), 20)
         << "input: LazySequence<int> seq(&ArraySequence{10,20,30}) -> seq.Get(1)"
@@ -47,8 +47,8 @@ TEST(LazySequenceConstructors, CopyConstructor) {
     LazySequence<int> seq(items, 3);
     LazySequence<int> copy(seq);
 
-    EXPECT_EQ(copy.GetLength().value, 3u)
-        << "input: LazySequence copy(seq{1,2,3}) -> copy.GetLength().value"
+    EXPECT_EQ(copy.GetLength().GetValue(), 3u)
+        << "input: LazySequence copy(seq{1,2,3}) -> copy.GetLength().GetValue()"
         << "\nexpected: 3";
     EXPECT_EQ(copy.Get(0), 1)
         << "input: LazySequence copy(seq{1,2,3}) -> copy.Get(0)"
@@ -61,8 +61,8 @@ TEST(LazySequenceConstructors, CopyConstructorDeep) {
     LazySequence<int> copy(seq);
     copy.Append(99);
 
-    EXPECT_EQ(seq.GetLength().value, 3u)
-        << "input: copy(seq) -> copy.Append(99) -> seq.GetLength().value"
+    EXPECT_EQ(seq.GetLength().GetValue(), 3u)
+        << "input: copy(seq) -> copy.Append(99) -> seq.GetLength().GetValue()"
         << "\nexpected: 3 (оригинал не изменился)";
 }
 

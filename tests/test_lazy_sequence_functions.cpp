@@ -38,7 +38,7 @@ TEST(LazySequenceFunctions, Where) {
     LazySequence<int> seq(items, 6);
 
     LazySequence<int>* res = seq.Where(isEven, 6);
-    EXPECT_EQ(res->GetLength().value, 3u)
+    EXPECT_EQ(res->GetLength().GetValue(), 3u)
         << "input: LazySequence{1,2,3,4,5,6}.Where(чётные, 6) -> GetLength()"
         << "\nexpected: 3";
     EXPECT_EQ(res->Get(0), 2)
@@ -55,7 +55,7 @@ TEST(LazySequenceFunctions, WhereOriginalUnchanged) {
     LazySequence<int> seq(items, 3);
 
     LazySequence<int>* res = seq.Where(isEven, 3);
-    EXPECT_EQ(seq.GetLength().value, 3u)
+    EXPECT_EQ(seq.GetLength().GetValue(), 3u)
         << "input: LazySequence{1,2,3}.Where(чётные, 3) -> seq.GetLength()"
         << "\nexpected: 3 (Where не изменяет оригинал)";
     delete res;
