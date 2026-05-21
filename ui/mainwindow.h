@@ -2,7 +2,6 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QLabel>
-#include <QSpinBox>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QTextEdit>
@@ -12,15 +11,14 @@
 #include <QTimer>
 #include <QPainter>
 #include <QApplication>
-#include <QCoreApplication>
-#include <QProcess>
 #include "lazy_sequence.hpp"
 #include "stream.hpp"
+#include "statistics.hpp"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
 protected:
@@ -53,7 +51,7 @@ private:
     QPushButton *btnStop;
 
     QGroupBox *groupResult;
-    QLabel *labelCount2;
+    QLabel *labelCount;
     QLabel *labelSum;
     QLabel *labelMin;
     QLabel *labelMax;
@@ -62,17 +60,17 @@ private:
     QTextEdit *textElements;
 
     QTimer *timer;
-    int processedCount = 0;
-    int liveCount = 0;  
-    int liveMin = 0;
-    int liveSum = 0;
-    int liveMax = 0;
+    size_t processedCount = 0;
+    Statistics<int> liveStats;
+
 
     QWidget *tabTests;
+
     QGroupBox *groupTestInput;
     QLabel *labelTestData;
     QLineEdit *lineTestData;
-    QLabel *labelExpCount;
+
+    QLabel *labelExpCount; 
     QLineEdit *lineExpCount;
     QLabel *labelExpSum;
     QLineEdit *lineExpSum;
@@ -92,6 +90,6 @@ private:
 
     void setupStatsTab();
     void setupTestsTab();
-    void updateResult(int cnt, int sum, int mn, int mx, double avg, int newVal = -1);
+    void updateResult(const Statistics<int>& stats, int newVal = -1);
     QString mainStyle();
 };
