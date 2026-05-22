@@ -4,19 +4,21 @@
 #include "array_sequence.hpp"
 #include "exceptions.hpp"
 
-struct Cardinal {
+class Cardinal {
     bool isInfinite; 
     size_t value; 
 
-    Cardinal(size_t val) : isInfinite(false), value(val) {}
+    Cardinal(bool isInfinite, size_t val) : isInfinite(isInfinite), value(val) {}
 
-    static Cardinal Infinite() 
-    {
-        Cardinal c(0);
-        c.isInfinite = true;
-        return c;
-    }
+    public:
+
+    Cardinal(size_t val) : Cardinal(false, val) {}
+    static Cardinal Infinite() { return Cardinal(true, 0); }
+
+    bool IsInfinite() const { return isInfinite; }
+    size_t GetValue() const { return value; }
 };
+
 
 template <typename T>
 class LazySequence {
@@ -32,7 +34,7 @@ private:
         if(!isInfinite) { 
             throw IndexOutOfRange(index, cache.GetLength()); 
         }
-        
+
         while(cache.GetLength()<=index) {     
             cache.Append(generator(cache));       
         }
@@ -43,7 +45,7 @@ public:
 
     LazySequence(T* items, size_t count) : isInfinite(false) 
     {
-        if(items == nullptr) { 
+        if(items==nullptr) { 
             throw NullPointer(); 
         }
         for(size_t i=0; i<count; i++) { cache.Append(items[i]); }
@@ -75,16 +77,22 @@ public:
         for(size_t i=0; i<initialCount; i++) { cache.Append(initialItems[i]); }
     }
 
+   T& operator[](size_t index) 
+    {
+        if(index>=cache.GetLength()) { materializeUpTo(index); }
+        return cache[index]; 
+    }
+
     T Get(size_t index) 
     {
         if(index>=cache.GetLength()) { materializeUpTo(index); }
-        return cache.Get(index);
+        return (*this)[index];
     }
 
     T GetFirst() 
     {
         if(cache.GetLength()==0) { throw EmptyCollection(); }
-        return Get(0);
+        return (*this)[0];
     }
 
     T GetLast() 
@@ -93,7 +101,7 @@ public:
             throw InvalidArgument("GetLast: cannot get last element of infinite sequence"); 
         }
         if(cache.GetLength()==0) { throw EmptyCollection(); }
-        return cache.Get(cache.GetLength()-1);
+        return (*this)[cache.GetLength()-1];
     }   
 
     LazySequence<T>* GetSubsequence(size_t startIndex, size_t endIndex) 
@@ -104,12 +112,12 @@ public:
                 ") > endIndex (" + std::to_string(endIndex) + ")"
             ); 
         }
-        if(!isInfinite && endIndex >= cache.GetLength()) {
+        if(!isInfinite && endIndex>=cache.GetLength()) {
             throw IndexOutOfRange(endIndex, cache.GetLength());
         }
         Get(endIndex);
         LazySequence<T>* result = new LazySequence<T>();
-        for(size_t i = startIndex; i <= endIndex; i++) {
+        for(size_t i=startIndex; i<=endIndex; i++) {
             result->cache.Append(this->cache.Get(i));
         }
         return result;
@@ -140,7 +148,7 @@ public:
 
     LazySequence<T>* InsertAt(T item, size_t index) 
     {
-        if(index > cache.GetLength()) { 
+        if(index>cache.GetLength()) { 
             throw IndexOutOfRange(index, cache.GetLength()); 
         }
         cache.InsertAt(item, index);
